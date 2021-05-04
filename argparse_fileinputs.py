@@ -18,21 +18,21 @@ def add_fileinputs(parser, desc = 'file'):
     """
 
     # Which files do the search and replace on:
-    parser.add_argument("-f", "--" + desc, action = 'append', help="Input a list of " + desc + "s separated using -f file1 -f fil2")
+    parser.add_argument("--" + desc + "s_single", action = 'append', help="Input a list of " + desc + "s separated using -f file1 -f fil2")
     parser.add_argument("--" + desc + "s_asstring", type=str, help="input a string with " + desc + "s separated by single spaces")
     parser.add_argument("--" + desc + "s_aslines", type=str, help="input a string with " + desc + "s separated by newlines")
     parser.add_argument("--" + desc + "s_infile", type=str, help="Input a file which contains a list of " + desc + "s separated by newlines")
-    parser.add_argument("-d", "--" + desc + "s_indir", action = 'append', help="Get " + desc + "s from a directory. Can also run on multiple directories by specifying -d dir1 -d dir2")
+    parser.add_argument("--" + desc + "s_indir", action = 'append', help="Get " + desc + "s from a directory. Can also run on multiple directories by specifying -d dir1 -d dir2")
     parser.add_argument("--" + desc + "s_inpwd", action = 'store_true', help="get all " + desc + "s in current directory")
 
     return(parser)
 
 
-def process_fileinputs(filelist, files_asstring, files_aslines, files_infile, files_indir, files_inpwd):
+def process_fileinputs(files_single, files_asstring, files_aslines, files_infile, files_indir, files_inpwd):
     """
     Take a list of input choices from argparse and turn them into a file list for infrep
 
-    filelist = list of files
+    files = list of files
 
     files_asstring = filenames inputted as a string with spaces in between (filenames should not have spaces)
     """
@@ -41,7 +41,7 @@ def process_fileinputs(filelist, files_asstring, files_aslines, files_infile, fi
     import sys
 
     numfileinputs = 0
-    if filelist is not None:
+    if files_single is not None:
         numfileinputs = numfileinputs + 1
     if files_asstring is not None:
         numfileinputs = numfileinputs + 1
@@ -56,8 +56,8 @@ def process_fileinputs(filelist, files_asstring, files_aslines, files_infile, fi
     if numfileinputs != 1:
         raise ValueError('Multiple file input methods')
 
-    if filelist is not None:
-        return(filelist)
+    if files_single is not None:
+        return(files_single)
 
     if files_asstring is not None:
         return(files_asstring.split(' '))
@@ -98,7 +98,7 @@ def test_ap():
 
     args = parser.parse_args()
 
-    filelist = process_fileinputs(args.file, args.files_asstring, args.files_aslines, args.files_infile, args.files_indir, args.files_inpwd)
+    filelist = process_fileinputs(args.files_single, args.files_asstring, args.files_aslines, args.files_infile, args.files_indir, args.files_inpwd)
 
     # adjust filelist so only contains basenames - only relevant for tests with indir/inpwd
     filelist = sorted([os.path.basename(filename) for filename in filelist])

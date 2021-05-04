@@ -36,54 +36,81 @@ def process_fileinputs(files_single, files_asstring, files_aslines, files_infile
 
     files_asstring = filenames inputted as a string with spaces in between (filenames should not have spaces)
     """
-    import os
-    import subprocess
-    import sys
-
-    numfileinputs = 0
-    if files_single is not None:
-        numfileinputs = numfileinputs + 1
-    if files_asstring is not None:
-        numfileinputs = numfileinputs + 1
-    if files_aslines is not None:
-        numfileinputs = numfileinputs + 1
-    if files_infile is not None:
-        numfileinputs = numfileinputs + 1
-    if files_indir is not None:
-        numfileinputs = numfileinputs + 1
-    if files_inpwd is True:
-        numfileinputs = numfileinputs + 1
-    if numfileinputs < 1:
-        raise ValueError('Need to specify a method for inputting files.')
-    elif numfileinputs > 1:
-        raise ValueError('Multiple file input methods')
+    filelist = []
 
     if files_single is not None:
-        return(files_single)
+        filelist = filelist + files_single
 
     if files_asstring is not None:
-        return(files_asstring.split(' '))
+        filelist = filelist + files_asstring.split(' ')
 
     if files_aslines is not None:
-        return(files_aslines.splitlines())
+        filelist = filelist + files_aslines.splitlines()
 
     if files_infile is not None:
         if not os.path.exists(files_infile):
             raise ValueError('files_infile should be a filename. It does not exist. files_infile: ' + str(files_infile))
         with open(files_infile, 'r') as f:
             filenames = f.read().splitlines()
-        return(filenames)
+        filelist = filelist + filenames
 
     if files_indir is not None or files_inpwd is True:
+        if files_indir is None:
+            files_indir = []
         if files_inpwd is True:
-            files_indir = [os.path.abspath(os.getcwd())]
-        filenames = []
+            files_indir = files_indir + [os.path.abspath(os.getcwd())]
         for thisrootdir in files_indir:
             for root, dirs, files in os.walk(thisrootdir, topdown=False):
                 for name in files:
-                    filenames.append(os.path.join(root, name))
+                    filelist.append(os.path.join(root, name))
 
-        return(filenames)
+    return(filelist)
+
+
+def process_fileinputs(args, desc = "file"):
+    """
+    Take a list of input choices from argparse and turn them into a file list for infrep
+
+    files = list of files
+
+    files_asstring = filenames inputted as a string with spaces in between (filenames should not have spaces)
+    """
+    filelist = []
+
+    files_single = getattr(args, desc + "s_single")
+    files_asstring = getattr(args, desc + "s_asstring")
+    files_aslines = getattr(args, desc + "s_aslines")
+    files_infile = getattr(args, desc + "s_infile")
+    files_indir = getattr(args, desc + "s_indir")
+    files_inpwd = getattr(args, desc + "s_inpwd")
+
+    if files_single is not None:
+        filelist = filelist + files_single
+
+    if files_asstring is not None:
+        filelist = filelist + files_asstring.split(' ')
+
+    if files_aslines is not None:
+        filelist = filelist + files_aslines.splitlines()
+
+    if files_infile is not None:
+        if not os.path.exists(files_infile):
+            raise ValueError('files_infile should be a filename. It does not exist. files_infile: ' + str(files_infile))
+        with open(files_infile, 'r') as f:
+            filenames = f.read().splitlines()
+        filelist = filelist + filenames
+
+    if files_indir is not None or files_inpwd is True:
+        if files_indir is None:
+            files_indir = []
+        if files_inpwd is True:
+            files_indir = files_indir + [os.path.abspath(os.getcwd())]
+        for thisrootdir in files_indir:
+            for root, dirs, files in os.walk(thisrootdir, topdown=False):
+                for name in files:
+                    filelist.append(os.path.join(root, name))
+
+    return(filelist)
 
 
 def test_ap():
@@ -100,7 +127,8 @@ def test_ap():
 
     args = parser.parse_args()
 
-    filelist = process_fileinputs(args.files_single, args.files_asstring, args.files_aslines, args.files_infile, args.files_indir, args.files_inpwd)
+    # filelist = process_fileinputs(args.files_single, args.files_asstring, args.files_aslines, args.files_infile, args.files_indir, args.files_inpwd)
+    filelist = process_fileinputs(args)
 
     # adjust filelist so only contains basenames - only relevant for tests with indir/inpwd
     filelist = sorted([os.path.basename(filename) for filename in filelist])

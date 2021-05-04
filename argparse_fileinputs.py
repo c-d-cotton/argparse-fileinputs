@@ -8,20 +8,22 @@ __projectdir__ = Path(os.path.dirname(os.path.realpath(__file__)) + '/')
 
 import argparse
 
-def add_fileinputs(parser):
+def add_fileinputs(parser, desc = 'file'):
     """
     ap should be specified beforehand as:
     parser = argparse.ArgumentParser()
     And I'll want to add other elements to it.
+
+    desc is how the input is described in argparse - should be in the singular
     """
 
     # Which files do the search and replace on:
-    parser.add_argument("-f", "--filename", action = 'append', help="Input a list of filenames separated using -f file1 -f fil2")
-    parser.add_argument("--files_asstring", type=str, help="input a string with filenames separated by single spaces")
-    parser.add_argument("--files_aslines", type=str, help="input a string with filenames separated by newlines")
-    parser.add_argument("--files_infile", type=str, help="Input a filename which contains a list of filenames separated by newlines")
-    parser.add_argument("-d", "--files_indir", action = 'append', help="Run on a directory. Can also run on multiple directories by specifying -d dir1 -d dir2")
-    parser.add_argument("--files_inpwd", action = 'store_true', help="get all filenames in current directory")
+    parser.add_argument("-f", "--" + desc, action = 'append', help="Input a list of " + desc + "s separated using -f file1 -f fil2")
+    parser.add_argument("--" + desc + "s_asstring", type=str, help="input a string with " + desc + "s separated by single spaces")
+    parser.add_argument("--" + desc + "s_aslines", type=str, help="input a string with " + desc + "s separated by newlines")
+    parser.add_argument("--" + desc + "s_infile", type=str, help="Input a file which contains a list of " + desc + "s separated by newlines")
+    parser.add_argument("-d", "--" + desc + "s_indir", action = 'append', help="Get " + desc + "s from a directory. Can also run on multiple directories by specifying -d dir1 -d dir2")
+    parser.add_argument("--" + desc + "s_inpwd", action = 'store_true', help="get all " + desc + "s in current directory")
 
     return(parser)
 
@@ -84,6 +86,8 @@ def process_fileinputs(filelist, files_asstring, files_aslines, files_infile, fi
 
 def test_ap():
     """
+    This function is called by the functions in test_argparse_fileinputs.py
+
     Should output list of 1.txt, 2.txt otherwise raises error.
     """
 
@@ -94,7 +98,7 @@ def test_ap():
 
     args = parser.parse_args()
 
-    filelist = process_fileinputs(args.filename, args.files_asstring, args.files_aslines, args.files_infile, args.files_indir, args.files_inpwd)
+    filelist = process_fileinputs(args.file, args.files_asstring, args.files_aslines, args.files_infile, args.files_indir, args.files_inpwd)
 
     # adjust filelist so only contains basenames - only relevant for tests with indir/inpwd
     filelist = sorted([os.path.basename(filename) for filename in filelist])

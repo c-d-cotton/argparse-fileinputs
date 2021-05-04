@@ -8,8 +8,8 @@ __projectdir__ = Path(os.path.dirname(os.path.realpath(__file__)) + '/')
 
 import subprocess
 
-def test_filename():
-    subprocess.check_call([__projectdir__ / Path('argparse_fileinputs.py'), '-f', '1.txt', '--filename', '2.txt'])
+def test_file():
+    subprocess.check_call([__projectdir__ / Path('argparse_fileinputs.py'), '-f', '1.txt', '--file', '2.txt'])
 
 
 def test_files_asstring():
@@ -44,7 +44,7 @@ def test_files_inpwd():
 
 
 def test_all():
-    test_filename()
+    test_file()
     test_files_asstring()
     test_files_aslines()
     test_files_infile()

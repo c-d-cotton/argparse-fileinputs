@@ -53,7 +53,9 @@ def process_fileinputs(files_single, files_asstring, files_aslines, files_infile
         numfileinputs = numfileinputs + 1
     if files_inpwd is True:
         numfileinputs = numfileinputs + 1
-    if numfileinputs != 1:
+    if numfileinputs < 1:
+        raise ValueError('Need to specify a method for inputting files.')
+    elif numfileinputs > 1:
         raise ValueError('Multiple file input methods')
 
     if files_single is not None:

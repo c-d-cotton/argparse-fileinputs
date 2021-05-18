@@ -18,7 +18,7 @@ def add_fileinputs(parser, desc = 'file'):
     """
 
     # Which files do the search and replace on:
-    parser.add_argument("--" + desc + "s_single", action = 'append', help="Input a list of " + desc + "s one at a time using --" + desc + "s_single arg1 --" + DESC + "s_single arg2")
+    parser.add_argument("--" + desc + "s_single", action = 'append', help="Input a list of " + desc + "s one at a time using --" + desc + "s_single arg1 --" + desc + "s_single arg2")
     parser.add_argument("--" + desc + "s_asstring", type=str, help="input a string with " + desc + "s separated by single spaces")
     parser.add_argument("--" + desc + "s_aslines", type=str, help="input a string with " + desc + "s separated by newlines")
     parser.add_argument("--" + desc + "s_infile", type=str, help="Input a file which contains a list of " + desc + "s separated by newlines")

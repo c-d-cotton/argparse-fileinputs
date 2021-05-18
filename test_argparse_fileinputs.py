@@ -50,6 +50,7 @@ def test_all():
     test_files_infile()
     test_files_indir()
     test_files_inpwd()
+    print('Test completed successfuly.')
 
 
 # Run:{{{1
